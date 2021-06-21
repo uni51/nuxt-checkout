@@ -12,26 +12,28 @@
           <span class="text-primary">Products</span>
         </h4>
         <ul class="list-group mb-3">
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0">Product name</h6>
-              <small class="text-muted">Brief description</small>
-            </div>
-            <span class="text-muted">$12</span>
-          </li>
+          <template v-for="product in products">
+            <li class="list-group-item d-flex justify-content-between lh-sm">
+              <div>
+                <h6 class="my-0">{{ product.title }}</h6>
+                <small class="text-muted">{{ product.description }}</small>
+              </div>
+              <span class="text-muted">{{ product.price }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between lh-sm">
+              <div>
+                <h6 class="my-0">Quantity</h6>
+              </div>
+              <input v-model="quantities[product.id]" class="text-muted form-control quantity" type="number" min="0">
+            </li>
+          </template>
           <li class="list-group-item d-flex justify-content-between">
             <span>Total (USD)</span>
-            <strong>$20</strong>
+            <strong>${{ total }}</strong>
           </li>
         </ul>
-
-        <form class="card p-2">
-          <div class="input-group">
-            <input type="text" class="form-control" placeholder="Promo code">
-            <button type="submit" class="btn btn-secondary">Redeem</button>
-          </div>
-        </form>
       </div>
+
       <div class="col-md-7 col-lg-8">
         <h4 class="mb-3">Personal Info</h4>
         <form class="needs-validation" novalidate>
@@ -91,15 +93,38 @@ export default Vue.extend({
     const {data} = await ctx.$axios.get(`links/${ctx.params.code}`);
 
     const user = data.user;
+    const products = data.products;
+    let quantities = [];
+
+    products.forEach((p: any) => {
+      quantities[p.id] = 0;
+    });
 
     return {
-      user
+      user,
+      products,
+      quantities
     }
   },
   data() {
     return {
-      user: null
+      user: null,
+      products: [],
+      quantities: []
+    }
+  },
+  computed: {
+    total() {
+      return this.products.reduce((s: number, p: any) => {
+        return s + p.price * this.quantities[p.id];
+      }, 0);
     }
   }
 }) 
 </script>
+
+<style>
+.quantity {
+  width: 65px;
+}
+</style>
