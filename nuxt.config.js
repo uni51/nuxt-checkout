@@ -1,5 +1,6 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
+  ssr: true,
   head: {
     title: 'nuxt-checkout',
     htmlAttrs: {
@@ -47,7 +48,9 @@ export default {
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    baseURL: 'http://localhost:8000/api/checkout/'
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {

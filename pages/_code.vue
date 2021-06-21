@@ -3,7 +3,7 @@
   <main>
     <div class="py-5 text-center">
       <h2>Welcome</h2>
-      <p class="lead"> has invited you to buy these products!</p>
+      <p class="lead">{{ user.first_name }} {{ user.last_name }} has invited you to buy these products!</p>
     </div>
 
     <div class="row g-5">
@@ -84,10 +84,22 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import {Context} from "@nuxt/types";
 
 export default Vue.extend({
-  mounted() {
-    console.log(this.$route.params.code);
+  async asyncData(ctx: Context) {
+    const {data} = await ctx.$axios.get(`links/${ctx.params.code}`);
+
+    const user = data.user;
+
+    return {
+      user
+    }
+  },
+  data() {
+    return {
+      user: null
+    }
   }
 }) 
 </script>
